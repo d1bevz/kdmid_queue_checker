@@ -36,7 +36,6 @@ logging.basicConfig(filename='queue.log',
                     datefmt='%H:%M:%S',
                     level=logging.INFO)
 
-
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
@@ -54,11 +53,12 @@ class QueueChecker:
         self.button_b = "//input[@id='ctl00_MainContent_ButtonB']"
         self.main_button_id = "//input[@id='ctl00_MainContent_Button1']" 
         self.text_form = "//input[@id='ctl00_MainContent_txtCode']"
+        self.checkbox = "//input[@id='ctl00_MainContent_RadioButtonList1_0']" 
 
 
-    def write_success_file(self): 
-        with open(self.order_id+"_"+self.code+"_success.txt", mode = "w") as f:
-            f.write("There are free timeslots")       
+    def write_success_file(self, text): 
+        with open(self.order_id+"_"+self.code+"_success.txt", mode = "w", encoding="utf-8") as f:
+            f.write(text)       
         
     def check_exists_by_xpath(self, xpath, driver):
         mark = False
@@ -113,7 +113,6 @@ class QueueChecker:
     
     def recognize_image(self): 
         digits = pytesseract.image_to_string(self.image_name, config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
-#        print(digits)
         return digits
 
     def check_queue(self): 
@@ -142,18 +141,26 @@ class QueueChecker:
             error = False
             
             try: 
-                main_button = driver.find_element(By.XPATH, self.main_button_id)    
+               driver.find_element(By.XPATH, self.main_button_id)    
             except: 
                 error = True
                 error_screen = True
                 driver.find_element(By.XPATH, self.text_form).clear()
                 # input('Input')
-        if not main_button.is_enabled(): 
-            logging.info('No appointments for this moment')
+				
+        if self.check_exists_by_xpath(self.checkbox, driver): 
+			
+            driver.find_element(By.XPATH,self.checkbox).click()
+            check_box = driver.find_element(By.XPATH, self.checkbox)
+            val = check_box.get_attribute("value")
+            # print('Appointment at: {}'.format(val))
+            logging.info('Appointment at: {}'.format(val))
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.main_button_id))).click()           
+            self.write_success_file(str(val))
+# 			('No appointments for this moment')
         else: 
-            driver.find_element(By.XPATH, main_button).click()
-            self.write_success_file()
-            logging.info('You have an appointment')
+            # print('No free timeslots for now')
+            logging.info('No free timeslots for now')
             
         driver.quit()
 
