@@ -19,7 +19,7 @@ Then, in _config.py_ file put the path to Tesseract.
 
 *Python 3.9* 
 
-The script was depeloped and tested in Windows Anaconda environment
+The script was depeloped and tested in Windows Anaconda environment for the consulate in Madrid
 
 ```
 git clone https://github.com/ZotovaElena/kdmid_queue_checker.git
