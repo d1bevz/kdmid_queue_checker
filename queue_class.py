@@ -4,16 +4,13 @@ Created on Thu Nov 24 18:29:09 2022
 
 @author: zotov
 
-#    'https://madrid.kdmid.ru/queue/SPCalendar.aspx?bjo=123610'
-
 """
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException, NoSuchElementException, ElementClickInterceptedException, ElementNotVisibleException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, ElementNotVisibleException
 from selenium.common.exceptions import ElementNotInteractableException, TimeoutException, StaleElementReferenceException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
 
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -25,7 +22,8 @@ from PIL import Image
 import cv2
 import numpy as np 
 import pytesseract
-from tess import removeIsland
+from image_processing import removeIsland
+import config
 
 import logging
 
@@ -36,16 +34,15 @@ logging.basicConfig(filename='queue.log',
                     datefmt='%H:%M:%S',
                     level=logging.INFO)
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = config.TESSERACT_PATH
 
 
 
 class QueueChecker: 
     def __init__(self, kdmid_subdomain, order_id, code):
-        self.kdmid_subdomain = kdmid_subdomain #'madrid'
-        self.order_id = order_id # '123610'
-        self.code = code #'7AE8EFCC'
-        
+        self.kdmid_subdomain = kdmid_subdomain 
+        self.order_id = order_id 
+        self.code = code
         self.url = 'http://'+self.kdmid_subdomain+'.kdmid.ru/queue/OrderInfo.aspx?id='+self.order_id+'&cd='+self.code
         self.image_name = 'captcha_processed.png'
         self.screen_name = "screenshot0.png"
@@ -74,7 +71,8 @@ class QueueChecker:
         return driver
     
     def screenshot_captcha(self, driver, error_screen=False): 
-             
+		   # make a screenshot of the window, crop the image to get captcha only, 
+		   # process the image: remove grey background, make letters black
         driver.save_screenshot("screenshot.png")
         
         screenshot = driver.get_screenshot_as_base64()
@@ -82,7 +80,7 @@ class QueueChecker:
         element = driver.find_element(By.XPATH, '//img[@id="ctl00_MainContent_imgSecNum"]')
     #    loc  = element.location
         size = element.size
-        
+		# the following values were set manually         
         if not error_screen: 
             left  = 476
             top   = 590        
@@ -122,7 +120,7 @@ class QueueChecker:
         
         error = True
         error_screen = False
-        
+        # iterate until captcha is recognized 
         while error: 
             
             self.screenshot_captcha(driver, error_screen)
@@ -146,20 +144,15 @@ class QueueChecker:
                 error = True
                 error_screen = True
                 driver.find_element(By.XPATH, self.text_form).clear()
-                # input('Input')
 				
-        if self.check_exists_by_xpath(self.checkbox, driver): 
-			
+        if self.check_exists_by_xpath(self.checkbox, driver): 			
             driver.find_element(By.XPATH,self.checkbox).click()
             check_box = driver.find_element(By.XPATH, self.checkbox)
             val = check_box.get_attribute("value")
-            # print('Appointment at: {}'.format(val))
             logging.info('Appointment at: {}'.format(val))
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.main_button_id))).click()           
-            self.write_success_file(str(val))
-# 			('No appointments for this moment')
+            self.write_success_file(str(val))			
         else: 
-            # print('No free timeslots for now')
             logging.info('No free timeslots for now')
             
         driver.quit()
