@@ -12,8 +12,8 @@ If success, you will get an email from the consulate with the information about 
 
 *Tesseract* 
 
-Tesseract OCR is used to recognize captcha digits. It should be installed on the machine. For Windows, see the installations instructons here https://github.com/UB-Mannheim/tesseract/wiki
-Then, in _config.py_ file put the path to Tesseract. 
+Tesseract OCR is used to recognize captcha digits. It should be installed on the machine. For Windows, see the installation instructons here https://github.com/UB-Mannheim/tesseract/wiki
+Then in _config.py_ file indicate the path to Tesseract. 
 
 *Chrome*
 
