@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Nov 23 15:29:59 2022
 
-@author: ezotova
-"""
 import numpy as np 
 
 # functions to process captcha images

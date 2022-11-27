@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Nov 26 00:14:54 2022
 
-@author: zotov
-"""
 import time
 import os
 import argparse 

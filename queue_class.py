@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 24 18:29:09 2022
 
-@author: zotov
-
-"""
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, ElementNotVisibleException
 from selenium.common.exceptions import ElementNotInteractableException, TimeoutException, StaleElementReferenceException
