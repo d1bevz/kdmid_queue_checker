@@ -30,7 +30,7 @@ git clone https://github.com/ZotovaElena/kdmid_queue_checker.git
 
 - execute the following command, where: 
 
-*--subdomain madrid* is the city of the consulate 
+*--subdomain* is the city of the consulate 
 
 *--order_id* is the number of the order assigned when you applied for the appointment for the first time (номер заявки)
 
