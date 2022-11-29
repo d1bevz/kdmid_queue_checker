@@ -56,6 +56,6 @@ The logs are saved in queue.log
 
 - Ubuntu server version with browser imitation 
 
-- Option to send an email about existing appointments without taking it. 
+- Option to send an email about existing appointments without taking any.
 
 - User Interface
