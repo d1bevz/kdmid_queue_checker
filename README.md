@@ -2,7 +2,7 @@
 
 Automatically checks the status of a queue after appointment intent 
 
-If you are in the queue waiting a free slot for an appointment in the Russian consulate, you must check the status of the queue at least once a day, 
+If you are in the queue waiting for a free slot for an appointment in the Russian consulate, you must check the status of the queue at least once a day, 
 which means enter the page with your order number and code and see if free slots are available. Once you stop entering the page daily, 
 they remove your order from the queue and you have to start the process once again. 
 This bot is designed to make the iterative checking process automatic and get the first nearest timeslot. You can set a period to check. 
