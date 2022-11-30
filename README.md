@@ -36,7 +36,7 @@ git clone https://github.com/ZotovaElena/kdmid_queue_checker.git
 
 *--code* is the security code of the order (защитный код)
 
-*--every_hour* how often the bot will repeat the check: minimal interval is 1 hour, default is 2 hours. 
+*--every_hours* how often the bot will repeat the check: minimal interval is 1 hour, default is 2 hours. 
 It is not recommended to check the page too often not to generate suspisious behaviour. 
 
 
