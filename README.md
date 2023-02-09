@@ -61,3 +61,5 @@ The logs are saved in queue.log
 - Option to send an email about existing appointments without taking any.
 
 - User Interface
+
+- Docker and cloud deployment
