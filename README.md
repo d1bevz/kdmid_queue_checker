@@ -1,23 +1,26 @@
 # KDMID Queue Checker Bot
 
-Automatically checks the status of a queue after appointment intent 
+Automatically checks the queue status after an appointment intent 
 
 If you are in the queue waiting for a free slot for an appointment in the Russian consulate, you must check the status of the queue at least once a day, 
 which means enter the page with your order number and code and see if free slots are available. Once you stop entering the page daily, 
 they remove your order from the queue and you have to start the process once again. 
+
 This bot is designed to make the iterative checking process automatic and get the first nearest timeslot. You can set a period to check. 
 If success, you will get an email from the consulate with the information about your appointment. 
 
 ## Requirements  
 
-*Tesseract* 
+- *Tesseract* 
 
 Tesseract OCR is used to recognize captcha digits. It should be installed on the machine. For Windows, see the installation instructons here https://github.com/UB-Mannheim/tesseract/wiki
 Then in _config.py_ file indicate the path to Tesseract. 
 
-*Chrome*
+- *Chrome*
 
-*Python 3.9* 
+- *Python 3.9* 
+
+## Run the script
 
 The script was depeloped and tested in Windows Anaconda environment for the consulate in Madrid
 
