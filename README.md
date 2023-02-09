@@ -20,7 +20,7 @@ Then in _config.py_ file indicate the path to Tesseract.
 
 - *Python 3.9* 
 
-## Run the script
+## Run 
 
 The script was depeloped and tested in Windows Anaconda environment for the consulate in Madrid
 
