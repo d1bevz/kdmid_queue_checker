@@ -26,7 +26,6 @@ The script was depeloped and tested in Windows Anaconda environment for the cons
 
 ```
 git clone https://github.com/ZotovaElena/kdmid_queue_checker.git
-
 ```
 
 - install requirements in conda or pip virtual environment 
