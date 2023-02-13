@@ -57,6 +57,8 @@ The logs are saved in queue.log
 
 ### TODO 
 
+- Test on monitors with different resolution 
+
 - Ubuntu server version with browser imitation 
 
 - Option to send an email about existing appointments without taking any.
