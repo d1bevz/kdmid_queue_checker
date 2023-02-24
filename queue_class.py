@@ -76,9 +76,7 @@ class QueueChecker:
 
         element = driver.find_element(By.XPATH, '//img[@id="ctl00_MainContent_imgSecNum"]')
         loc  = element.location
-        print(loc)
         size = element.size
-        print(size)
 
         left = loc['x']
         top = loc['y']
@@ -91,7 +89,6 @@ class QueueChecker:
         img = img.resize(screensize)
         
         box = (int(left), int(top), int(right), int(bottom))
-
         area = img.crop(box)
         area.save(self.screen_name, 'PNG')
         
@@ -156,7 +153,7 @@ class QueueChecker:
         else: 
             logging.info('No free timeslots for now')
             
-        # driver.quit()
+        driver.quit()
 
 # queue_checker = QueueChecker()
 # queue_checker.check_queue()
