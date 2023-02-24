@@ -72,21 +72,26 @@ class QueueChecker:
         
         screenshot = driver.get_screenshot_as_base64()
         img = Image.open(BytesIO(base64.b64decode(screenshot)))
+		
+
         element = driver.find_element(By.XPATH, '//img[@id="ctl00_MainContent_imgSecNum"]')
-    #    loc  = element.location
+        loc  = element.location
+        print(loc)
         size = element.size
-		# the following values were set manually         
-        if not error_screen: 
-            left  = 476
-            top   = 590        
-        else: 
-            left  = 470
-            top   = 622
-            
-        width = size['width']+30
-        height = size['height']+10
+        print(size)
+
+        left = loc['x']
+        top = loc['y']
+        right = (loc['x'] + size['width'])
+        bottom = (loc['y'] + size['height'])
+        screenshot = driver.get_screenshot_as_base64()
+		  #Get size of the part of the screen visible in the screenshot
+        screensize = (driver.execute_script("return document.body.clientWidth"), 
+		              driver.execute_script("return window.innerHeight"))
+        img = img.resize(screensize)
         
-        box = (int(left), int(top), int(left+width), int(top+height))
+        box = (int(left), int(top), int(right), int(bottom))
+
         area = img.crop(box)
         area.save(self.screen_name, 'PNG')
         
@@ -111,6 +116,7 @@ class QueueChecker:
     def check_queue(self): 
         
         driver = self.get_driver()
+        driver.maximize_window()
         driver.get(self.url) 
         
         error = True
@@ -150,7 +156,7 @@ class QueueChecker:
         else: 
             logging.info('No free timeslots for now')
             
-        driver.quit()
+        # driver.quit()
 
-#queue_checker = QueueChecker()
-#queue_checker.check_queue()
+# queue_checker = QueueChecker()
+# queue_checker.check_queue()
