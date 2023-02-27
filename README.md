@@ -9,7 +9,7 @@ they remove your order from the queue and you have to start the process once aga
 This bot is designed to make the iterative checking process automatic and get the first nearest timeslot. You can set a period to check. 
 If success, you will get an email from the consulate with the information about your appointment and the success file will be written in the work folder. There is no option of selecting the slot, if there are various. 
 
-If you don't like the time the bot got for you, you can cancel the appointment on the page (manually) and come back to the queue with the same order number and code. Don't forget de delete the <>success.txt file in the work directory to run the script, as it is written to stop iteration. 
+If you don't like the time the bot got for you, you can cancel the appointment on the page (manually) and come back to the queue with the same order number and code. Don't forget to delete the success.txt file in the work directory before running the script, as it is written to stop iteration. 
 
 ## Requirements  
 
