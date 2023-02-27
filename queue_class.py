@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, ElementNotVisibleException
 from selenium.common.exceptions import ElementNotInteractableException, TimeoutException, StaleElementReferenceException
@@ -8,21 +6,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from webdriver_manager.chrome import ChromeDriverManager
+from image_processing import removeIsland
 
+import numpy as np 
 import base64
 from io import BytesIO
-
 from PIL import Image
-
-import cv2
-import numpy as np 
 import pytesseract
-from image_processing import removeIsland
+import cv2
+
 import config
-
 import logging
-
-
 logging.basicConfig(filename='queue.log',
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
@@ -30,7 +24,6 @@ logging.basicConfig(filename='queue.log',
                     level=logging.INFO)
 
 pytesseract.pytesseract.tesseract_cmd = config.TESSERACT_PATH
-
 
 
 class QueueChecker: 
@@ -66,24 +59,22 @@ class QueueChecker:
         return driver
     
     def screenshot_captcha(self, driver, error_screen=False): 
-		   # make a screenshot of the window, crop the image to get captcha only, 
-		   # process the image: remove grey background, make letters black
-        driver.save_screenshot("screenshot.png")
+	```Make a screenshot of the window, crop the image to get captcha only, 
+	process the image: remove grey background, make letters black```
         
-        screenshot = driver.get_screenshot_as_base64()
-        img = Image.open(BytesIO(base64.b64decode(screenshot)))
-		
-
+	# Detect the image of the captcha and get it's position
         element = driver.find_element(By.XPATH, '//img[@id="ctl00_MainContent_imgSecNum"]')
         loc  = element.location
         size = element.size
-
         left = loc['x']
         top = loc['y']
         right = (loc['x'] + size['width'])
         bottom = (loc['y'] + size['height'])
+	
+	driver.save_screenshot("screenshot.png")	
         screenshot = driver.get_screenshot_as_base64()
-		  #Get size of the part of the screen visible in the screenshot
+	img = Image.open(BytesIO(base64.b64decode(screenshot)))
+	#Get size of the part of the screen visible in the screenshot
         screensize = (driver.execute_script("return document.body.clientWidth"), 
 		              driver.execute_script("return window.innerHeight"))
         img = img.resize(screensize)
@@ -91,7 +82,8 @@ class QueueChecker:
         box = (int(left), int(top), int(right), int(bottom))
         area = img.crop(box)
         area.save(self.screen_name, 'PNG')
-        
+	
+        #process saved image to make it more contrast
         img  = cv2.imread(self.screen_name)
         # Convert to grayscale
         c_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -111,7 +103,6 @@ class QueueChecker:
         return digits
 
     def check_queue(self): 
-        
         driver = self.get_driver()
         driver.maximize_window()
         driver.get(self.url) 
@@ -120,7 +111,6 @@ class QueueChecker:
         error_screen = False
         # iterate until captcha is recognized 
         while error: 
-            
             self.screenshot_captcha(driver, error_screen)
             digits = self.recognize_image()
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.text_form))).send_keys(str(digits))
@@ -133,7 +123,6 @@ class QueueChecker:
             
             window_after = driver.window_handles[0]
             driver.switch_to.window(window_after)
-            
             error = False
             
             try: 
@@ -143,12 +132,14 @@ class QueueChecker:
                 error_screen = True
                 driver.find_element(By.XPATH, self.text_form).clear()
 				
-        if self.check_exists_by_xpath(self.checkbox, driver): 			
+        if self.check_exists_by_xpath(self.checkbox, driver): 
+	    # if success, take the first available timeslot
             driver.find_element(By.XPATH,self.checkbox).click()
             check_box = driver.find_element(By.XPATH, self.checkbox)
             val = check_box.get_attribute("value")
             logging.info('Appointment at: {}'.format(val))
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.main_button_id))).click()           
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.main_button_id))).click()  
+	    # write success file to stop iterating
             self.write_success_file(str(val))			
         else: 
             logging.info('No free timeslots for now')
