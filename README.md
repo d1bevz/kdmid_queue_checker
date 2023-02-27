@@ -57,6 +57,7 @@ python queue_bot.py --subdomain madrid --order_id 123610 --code 7AE8EFCC --every
 ```
 
 The logs are saved in queue.log
+
 After getting an appointment, a _success.txt_ file is written in the work directory. 
 
 ### TODO 
