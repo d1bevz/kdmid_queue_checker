@@ -12,38 +12,30 @@ from queue_class import QueueChecker
 # every_hours = 3
 
 def run(queue_checker, every_hours): 
-	success = False
-	while not success:
-	    if not os.path.isfile(queue_checker.order_id+"_"+queue_checker.code+"_success.txt"): 
-	        queue_checker.check_queue()
-	        time.sleep(every_hours*3600)
-	    else: 
-	        print('file exists, exiting')
-	        success = True
-
+    anyPending = True
+    while anyPending:
+        anyPending = False
+        for order_id, code in queue_checker.order_code_pairs:
+            if not os.path.isfile(f"{order_id}_{code}_success.txt"): 
+                anyPending = True
+                queue_checker.check_queue()
+                time.sleep(every_hours*3600)
+            else: 
+                print(f'Appointment found for order {order_id}, exiting')
 
 if __name__ == '__main__':
-		
-	parser = argparse.ArgumentParser(description='Parameters for checking')
-
-	parser.add_argument('--subdomain',
-	                       type=str, required=True,
-	                       help='The city where the consulate is situated')
-	
-	parser.add_argument('--order_id',
-	                       type=str, required=True,
-	                       help='Номер заявки')
-	
-	parser.add_argument('--code',
-	                       type=str, required=True, 
-	                       help='Защитный код')
-	
-	parser.add_argument('--every_hours',
-	                       type=int, default=2,
-	                       help='Every n hours to check the queue, default 2')
-	
-	args = parser.parse_args()
-	
-	queue_checker = QueueChecker(args.subdomain, args.order_id, args.code)
-	
-	run(queue_checker, args.every_hours)
+    parser = argparse.ArgumentParser(description='Parameters for checking the queue')
+    parser.add_argument('--subdomain', type=str, required=True, help='The city where the consulate is situated')
+    parser.add_argument('--order_code_pairs', type=str, nargs='+', help='Pairs of order_id and code')
+    parser.add_argument('--every_hours', type=int, default=2, help='Every n hours to check the queue, default 2')
+    
+    args = parser.parse_args()
+    
+    # Parse order_code_pairs argument into a list of tuples
+    order_code_pairs = []
+    for pair in args.order_code_pairs:
+        order_id, code = pair.split(',')
+        order_code_pairs.append((order_id, code))
+    
+    queue_checker = QueueChecker(args.subdomain, order_code_pairs)
+    run(queue_checker, args.every_hours)
