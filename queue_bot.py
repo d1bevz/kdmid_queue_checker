@@ -17,11 +17,12 @@ def run(queue_checker, every_hours):
         anyPending = False
         for order_id, code in queue_checker.order_code_pairs:
             if not os.path.isfile(f"{order_id}_{code}_success.txt"): 
-                anyPending = True
-                queue_checker.check_queue()
-                time.sleep(every_hours*3600)
+                print(f"Order {order_id}: Appointment found, skipping")
+                continue
             else: 
-                print(f'Appointment found for order {order_id}, exiting')
+                anyPending = True
+            queue_checker.check_queue()
+            time.sleep(every_hours*3600)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parameters for checking the queue')
