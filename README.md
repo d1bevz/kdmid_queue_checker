@@ -21,51 +21,34 @@ Tesseract OCR is used to recognize captcha digits. It should be installed on the
 
 - *Python 3.9* 
 
-## Run 
+## Setup
 
-The script was depeloped and tested in Windows Anaconda environment for the consulate in Madrid
+1. **Set up the Conda environment:**
+   - Install Miniconda by downloading the installer:
+     - Download Miniconda installer with `wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`.
+     - Run the installer script with `bash Miniconda3-latest-Linux-x86_64.sh`.
+   - Update the bash environment with `source ~/.bashrc`.
+   - Create and activate a Conda environment named "kdmid_bot" with Python 3.9:
+     - `conda create --name kdmid_bot python=3.9`
+     - `conda activate kdmid_bot`.
+   - Install project dependencies from `requirements.txt` using `pip install -r requirements.txt`.
 
-```
-git clone https://github.com/ZotovaElena/kdmid_queue_checker.git
-cd kdmid_queue_checker
-```
+2. **Setup chromedriver:**
+   - Download chromedriver with `wget -N https://chromedriver.storage.googleapis.com/119.0.6045.105/chromedriver_linux64.zip -P ~/Downloads`.
+   - Install unzip with `sudo apt install unzip`.
+   - Unzip and move chromedriver to `/usr/local/bin/`:
+     - `unzip ~/Downloads/chromedriver-linux64.zip -d /usr/local/bin/`
+     - `chmod +x /usr/local/bin/chromedriver`.
 
-- install requirements in conda or pip virtual environment 
+3. **Install Tesseract OCR:**
+   - Install Tesseract OCR with `sudo apt install tesseract-ocr`.
+   - Verify Tesseract installation with `tesseract --version`.
 
-- in _config.py_ file indicate the path to Tesseract
+4. **Ensure that chromedriver and Tesseract OCR are correctly installed and accessible in the system path for the project's execution.**
 
-- execute the following command, where: 
-
-*--subdomain* is the city of the consulate 
-
-*--order_id* is the number of the order assigned when you applied for the appointment for the first time (номер заявки)
-
-*--code* is the security code of the order (защитный код)
-
-*--every_hours* how often the bot will repeat the check: minimal interval is 1 hour, default is 2 hours. 
-It is not recommended to check the page too often not to generate suspisious behaviour. Usually every 2-3 hours is enough to get the appoinmtment during 24 hours. 
+5. **Run the queue bot:**
+   - Activate the Conda environment with `conda activate kdmid_bot`.
+   - Launch the queue bot in the background:
+     - `nohup python queue_bot.py --subdomain lisboa --order_code_pairs 54937,2E74DD83 --every_hours 2 > output.txt &`.
 
 
-```
-python queue_bot.py --subdomain madrid --order_id 123610 --code 7AE8EFCC --every_hours 3
-```
-
-- execute in background mode:
-
-```
-python queue_bot.py --subdomain madrid --order_id 123610 --code 7AE8EFCC --every_hours 3 > output.txt & 
-```
-
-The logs are saved in queue.log
-
-After getting an appointment, a _success.txt_ file is written in the work directory. 
-
-### TODO 
-
-- Ubuntu server version with browser imitation 
-
-- Option to send an email about existing appointments without taking any.
-
-- User Interface
-
-- Docker and cloud deployment
