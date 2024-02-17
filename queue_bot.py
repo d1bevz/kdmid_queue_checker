@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import time
-import os
 import argparse 
 
 from queue_class import QueueChecker
@@ -12,15 +11,8 @@ from queue_class import QueueChecker
 # every_hours = 3
 
 def run(queue_checker, every_hours): 
-    anyPending = True
-    while anyPending:
-        anyPending = False
+    while True:
         for order_id, code in queue_checker.order_code_pairs:
-            if not os.path.isfile(f"{order_id}_{code}_success.txt"): 
-                print(f"Order {order_id}: Appointment found, skipping")
-                continue
-            else: 
-                anyPending = True
             queue_checker.check_queue()
             time.sleep(every_hours*3600)
 
