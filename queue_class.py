@@ -20,6 +20,8 @@ import config
 import logging
 import requests
 
+import os
+
 class TelegramLoggingHandler(logging.Handler):
     def __init__(self, token, chat_id):
         super().__init__()
@@ -128,14 +130,20 @@ class QueueChecker:
 
     def check_queue(self):
         for order_id, code in self.order_code_pairs:
+            if os.path.isfile(f"{order_id}_{code}_success.txt"):
+                self.logger.info(f"Order {order_id}: Appointment found, skipping")
+                continue
             self.order_id = order_id
             self.code = code
             self.url = 'http://'+self.kdmid_subdomain+'.kdmid.ru/queue/OrderInfo.aspx?id='+self.order_id+'&cd='+self.code
             driver = self.get_driver()
             driver.maximize_window()
-            driver.get(self.url) 
-            self.logger.info(f"——————— Order {self.order_id} ––––––––")
-            self.logger.info(f"{self.order_id}: Page loaded")
+            try: 
+                driver.get(self.url) 
+            except:
+                self.logger.info(f"{self.order_id}: Failed to load order page")
+            # self.logger.info(f"——————— Order {self.order_id} ––––––––")
+            # self.logger.info(f"{self.order_id}: Page loaded")
             
             error = True
             error_screen = False
@@ -164,17 +172,17 @@ class QueueChecker:
                     error_screen = True
                     driver.find_element(By.XPATH, self.text_form).clear()
                     
-            self.logger.info(f"{self.order_id}: Captcha accepted. Checking timeslots")
+            # self.logger.info(f"{self.order_id}: Captcha accepted. Checking timeslots")
             if self.check_exists_by_xpath(self.checkbox, driver): 
             # if success, take the first available timeslot
                 driver.find_element(By.XPATH,self.checkbox).click()
                 check_box = driver.find_element(By.XPATH, self.checkbox)
                 val = check_box.get_attribute("value")
-                self.logger.info(f"{self.order_id}: Appointment at: {val}")
+                self.logger.info(f"Order {self.order_id}: Appointment booked for: {val}")
                 WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, self.main_button_id))).click()  
             # write success file to stop iterating
                 self.write_success_file(str(val))			
             else: 
-                self.logger.info(f"{self.order_id}: No free timeslots for now")
+                self.logger.info(f"Order {self.order_id}: Checked. No free timeslots for now")
                 
             driver.quit()
